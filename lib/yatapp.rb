@@ -1,5 +1,11 @@
 require "yatapp/version"
+require "yatapp/configuration"
+require "yatapp/yata_api_caller"
 
 module Yatapp
-  # Your code goes here...
+  extend Configuration
+
+  class << self
+
+  end
 end
