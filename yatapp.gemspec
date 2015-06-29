@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["luki3k5"]
   spec.email         = ["luki3k5@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{This gem allows for easy integration with Yata to fetch translation files from the service}
+  spec.description   = %q{This gem allows for easy integration with Yata to fetch translation files from the service}
+  spec.homepage      = "http://github.com/luki3k5/yatapp"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
