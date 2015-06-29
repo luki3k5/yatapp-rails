@@ -14,9 +14,8 @@ module Yatapp
 
     def initialize
       initialize_configuration
-      binding.pry
-      @connection   = make_connection
-      @is_rails     = defined?(Rails)
+      @connection = make_connection
+      @is_rails   = defined?(Rails)
     end
 
     def make_connection
