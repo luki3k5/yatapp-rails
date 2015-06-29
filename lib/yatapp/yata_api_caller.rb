@@ -5,14 +5,17 @@ require 'pry'
 
 module Yatapp
   class YataApiCaller
-    attr_reader :project_hash, :is_rails
+    API_CALLER_ATTRIBUTES = [:is_rails, :connection].freeze
+    API_END_POINT_URL     = "/api/project/:project_id/download/:lang"
+    API_BASE_URL          = "http://yata-staging.herokuapp.com"
 
-    API_END_POINT_URL = "/api/project/:project_id/download/:lang"
-    API_BASE_URL = "http://yata-staging.herokuapp.com"
+    attr_accessor *Yatapp::Configuration::CONFIGURATION_OPTIONS
+    attr_reader *API_CALLER_ATTRIBUTES
 
-    def initialize(project_hash)
+    def initialize
+      initialize_configuration
+      binding.pry
       @connection   = make_connection
-      @project_hash = project_hash
       @is_rails     = defined?(Rails)
     end
 
@@ -22,15 +25,22 @@ module Yatapp
       end
     end
 
-    def get_translations(languages)
+    def get_translations
       languages.each do |lang|
-        url = download_url(lang)
-        api_response = @connection.get(url)
+        api_url      = download_url(lang)
+        api_response = connection.get(api_url)
         save_translation(lang, api_response)
       end
     end
 
     private
+      def initialize_configuration
+        options = Yatapp.options
+        Configuration::CONFIGURATION_OPTIONS.each do |key|
+          send("#{key}=", options[key])
+        end
+      end
+
       def save_translation(lang, response)
         bfp = base_file_path
         File.open("#{bfp}#{lang}.yata.yml", 'wb') { |f| f.write(response.body) }
@@ -41,7 +51,7 @@ module Yatapp
       end
 
       def download_url(lang)
-        url = API_END_POINT_URL.sub(':project_id', project_hash)
+        url = API_END_POINT_URL.sub(':project_id', project)
         url = url.sub(':lang', lang)
       end
 

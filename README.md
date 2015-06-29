@@ -1,8 +1,6 @@
 # Yatapp
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/yatapp`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Welcome to Yata integration gem, this gem will allow you to easy get your translations from http://yatapp.com service. 
 
 ## Installation
 
@@ -21,8 +19,21 @@ Or install it yourself as:
     $ gem install yatapp
 
 ## Usage
+Before using Yata integration gem you need to configure it.
+We recommend adding the following lines to freshly created initialiser:
 
-TODO: Write usage instructions here
+
+```ruby
+include Yatapp
+
+Yatapp.configure do |c|
+  c.languages         = ['en', 'de'] # add any languages you wish by language code
+  c.api_access_token  = ENV['YATA_API_KEY'] # access key to Yata
+  c.project           = 'hash-of-your-project' # project you wish to fetch from
+end
+
+```
+
 
 ## Development
 
