@@ -1,6 +1,6 @@
 # Yatapp
 
-Welcome to Yata integration gem, this gem will allow you to easy get your translations from http://yatapp.com service. 
+Welcome to Yata integration gem, this gem will allow you to easy get your translations from http://yatapp.net service.
 
 ## Installation
 
@@ -18,9 +18,10 @@ Or install it yourself as:
 
     $ gem install yatapp
 
-## Usage
+## Usage in Rails
 Before using Yata integration gem you need to configure it.
-We recommend adding the following lines to freshly created initialiser:
+We recommend adding the following lines to freshly created initialiser
+in your rails project:
 
 
 ```ruby
@@ -33,7 +34,6 @@ Yatapp.configure do |c|
 end
 
 ```
-
 
 ## Development
 
