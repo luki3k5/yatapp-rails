@@ -5,9 +5,9 @@ require 'pry'
 
 module Yatapp
   class YataApiCaller
-    API_CALLER_ATTRIBUTES = [:is_rails, :connection].freeze
+    API_CALLER_ATTRIBUTES = [:connection].freeze
     API_END_POINT_URL     = "/api/project/:project_id/download/:lang"
-    API_BASE_URL          = "http://yata-staging.herokuapp.com"
+    API_BASE_URL          = "http://yatapp.net"
 
     attr_accessor *Yatapp::Configuration::CONFIGURATION_OPTIONS
     attr_reader *API_CALLER_ATTRIBUTES
@@ -15,7 +15,6 @@ module Yatapp
     def initialize
       initialize_configuration
       @connection = make_connection
-      @is_rails   = defined?(Rails)
     end
 
     def make_connection
@@ -46,7 +45,7 @@ module Yatapp
       end
 
       def base_file_path
-        "#{Rails.root}/config/locales/" if is_rails
+        "#{Rails.root}/config/locales/" if defined?(Rails)
       end
 
       def download_url(lang)
