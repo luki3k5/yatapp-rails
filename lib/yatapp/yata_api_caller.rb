@@ -7,7 +7,7 @@ module Yatapp
   class YataApiCaller
     API_CALLER_ATTRIBUTES = [:connection].freeze
     API_END_POINT_URL     = "/api/project/:project_id/download/:lang"
-    API_BASE_URL          = "http://yatapp.net"
+    API_BASE_URL          = "http://api.yatapp.net"
 
     attr_accessor *Yatapp::Configuration::CONFIGURATION_OPTIONS
     attr_reader *API_CALLER_ATTRIBUTES
