@@ -25,6 +25,7 @@ module Yatapp
 
     def get_translations
       languages.each do |lang|
+        puts "Getting translation for #{lang}"
         api_url      = download_url(lang)
         api_response = connection.get(api_url)
         save_translation(lang, api_response)
@@ -42,6 +43,7 @@ module Yatapp
       def save_translation(lang, response)
         bfp = base_file_path
         File.open("#{bfp}#{lang}.yata.yml", 'wb') { |f| f.write(response.body) }
+        puts "#{lang}.yata.yml saved"
       end
 
       def base_file_path
