@@ -5,22 +5,42 @@ require 'pry'
 
 module Yatapp
   class YataApiCaller
-    API_CALLER_ATTRIBUTES = [:connection].freeze
-    API_END_POINT_URL     = "/api/project/:project_id/download/:lang"
+    ALLOWED_FORMATS = %w(json yaml)
+    API_VERSION           = 'v1'
+    API_END_POINT_URL     = "/api/:api_version/project/:project_id/:lang/:format"
     API_BASE_URL          = "http://api.yatapp.net"
+    API_CALLER_ATTRIBUTES = [
+      :connection,
+      :languages,
+      :project_id,
+      :translation_format
+    ].freeze
 
     attr_accessor *Yatapp::Configuration::CONFIGURATION_OPTIONS
     attr_reader *API_CALLER_ATTRIBUTES
 
     def initialize
       initialize_configuration
-      @connection = make_connection
+      @translation_format = 'json'
+      @connection         = make_connection
     end
 
     def make_connection
       Faraday.new(url: API_BASE_URL) do |faraday|
         faraday.adapter :typhoeus
       end
+    end
+
+    def set_languages(languages)
+      @languages = languages
+    end
+
+    def set_project_id(project_id)
+      @project_id = project_id
+    end
+
+    def set_translation_format(format)
+      @translation_format = translation_format
     end
 
     def get_translations
@@ -42,8 +62,8 @@ module Yatapp
 
       def save_translation(lang, response)
         bfp = base_file_path
-        File.open("#{bfp}#{lang}.yata.yml", 'wb') { |f| f.write(response.body) }
-        puts "#{lang}.yata.yml saved"
+        File.open("#{bfp}#{lang}.yata.#{translation_format}", 'wb') { |f| f.write(response.body) }
+        puts "#{lang}.yata.#{translation_format} saved"
       end
 
       def base_file_path
@@ -51,7 +71,9 @@ module Yatapp
       end
 
       def download_url(lang)
-        url = API_END_POINT_URL.sub(':project_id', project)
+        url = API_END_POINT_URL.sub(':project_id', project_id)
+        url = url.sub(':format', translation_format)
+        url = url.sub(':api_version', API_VERSION)
         url = url.sub(':lang', lang)
       end
 

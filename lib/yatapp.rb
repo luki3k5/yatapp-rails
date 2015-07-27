@@ -19,6 +19,22 @@ module Yatapp
   end
 
   module Methods
+    def yata_project
+      yield
+    end
+
+    def languages(languages)
+      Yatapp.api_caller.set_languages(languages)
+    end
+
+    def project_id(project_id)
+      Yatapp.api_caller.set_project_id(project_id)
+    end
+
+    def set_translation_format(frmt)
+      Yatapp.api_caller.set_translation_format(frmt)
+    end
+
     def get_translations
       Yatapp.api_caller.get_translations
     end

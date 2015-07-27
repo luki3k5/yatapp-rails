@@ -25,12 +25,18 @@ in your rails project:
 
 
 ```ruby
+
 include Yatapp
 
 Yatapp.configure do |c|
-  c.languages         = ['en', 'de'] # add any languages you wish by language code
-  c.api_access_token  = ENV['YATA_API_KEY'] # access key to Yata
-  c.project           = 'hash-of-your-project' # project you wish to fetch from
+  c.api_access_token = ENV['YATA_API_KEY'] # access key to Yata
+end
+
+
+yata_project do
+  project_id 'your-project-id' # project id you wish to fetch from (you can find it under settings of your organization)
+  languages  ['en', 'de']      # add any languages you wish by language code
+  format :json                 # format you wish to get files in, available for now are (yaml and json)
 end
 
 ```
