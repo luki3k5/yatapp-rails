@@ -25,12 +25,6 @@ module Yatapp
       @connection         = make_connection
     end
 
-    def make_connection
-      Faraday.new(url: API_BASE_URL) do |faraday|
-        faraday.adapter :typhoeus
-      end
-    end
-
     def set_languages(languages)
       @languages = languages
     end
@@ -57,6 +51,12 @@ module Yatapp
         options = Yatapp.options
         Configuration::CONFIGURATION_OPTIONS.each do |key|
           send("#{key}=", options[key])
+        end
+      end
+
+      def make_connection
+        Faraday.new(url: API_BASE_URL) do |faraday|
+          faraday.adapter :typhoeus
         end
       end
 

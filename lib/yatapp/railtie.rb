@@ -1,7 +1,7 @@
 require 'yatapp'
 require 'rails'
 
-module GoogleSpreadsheet2yml
+module Yatapp
   class Railtie < Rails::Railtie
     railtie_name :yatapp
 
