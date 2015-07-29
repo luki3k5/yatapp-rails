@@ -33,7 +33,7 @@ module Yatapp
       @project_id = project_id
     end
 
-    def set_translation_format(format)
+    def set_translation_format(translation_format)
       @translation_format = translation_format
     end
 

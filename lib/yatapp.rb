@@ -15,7 +15,6 @@ module Yatapp
     def api_caller
       @api_caller ||= YataApiCaller.new
     end
-
   end
 
   module Methods
@@ -31,7 +30,7 @@ module Yatapp
       Yatapp.api_caller.set_project_id(project_id)
     end
 
-    def set_translation_format(frmt)
+    def translations_format(frmt)
       Yatapp.api_caller.set_translation_format(frmt)
     end
 

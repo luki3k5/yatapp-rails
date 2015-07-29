@@ -32,7 +32,6 @@ Yatapp.configure do |c|
   c.api_access_token = ENV['YATA_API_KEY'] # access key to Yata
 end
 
-
 yata_project do
   project_id 'your-project-id' # project id you wish to fetch from (you can find it under settings of your organization)
   languages  ['en', 'de']      # add any languages you wish by language code
