@@ -75,6 +75,7 @@ module Yatapp
         url = url.sub(':format', translation_format)
         url = url.sub(':api_version', API_VERSION)
         url = url.sub(':lang', lang)
+        url = url + "?apiToken=#{api_access_token}"
       end
 
   end
