@@ -42,11 +42,19 @@ module Yatapp
         puts "Getting translation for #{lang}"
         api_url      = download_url(lang)
         api_response = connection.get(api_url)
+        next if !should_save_the_translation?(api_response)
         save_translation(lang, api_response)
       end
     end
 
     private
+      def should_save_the_translation?(api_response)
+        if api_response.status != 200
+          puts "INVALID RESPONSE: #{api_response.body}"
+          return false
+        end
+      end
+
       def initialize_configuration
         options = Yatapp.options
         Configuration::CONFIGURATION_OPTIONS.each do |key|
