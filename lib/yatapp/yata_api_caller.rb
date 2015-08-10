@@ -50,7 +50,7 @@ module Yatapp
     private
       def should_save_the_translation?(api_response)
         if api_response.status != 200
-          puts "INVALID RESPONSE: #{api_response}"
+          puts "INVALID RESPONSE: #{api_response.body}"
           return false
         end
       end
