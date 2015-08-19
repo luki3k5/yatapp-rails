@@ -15,27 +15,38 @@ module Yatapp
     def api_caller
       @api_caller ||= YataApiCaller.new
     end
+
+    def all_projects
+      @all_projects ||= []
+    end
+
+    def all_projects_add(project)
+      @all_projects ||= []
+      @all_projects << project
+    end
   end
 
   module Methods
     def yata_project
+      @current_project = YataApiCaller.new
       yield
+      Yatapp.all_projects_add(@current_project)
     end
 
     def languages(languages)
-      Yatapp.api_caller.set_languages(languages)
+      @current_project.set_languages(languages)
     end
 
     def project_id(project_id)
-      Yatapp.api_caller.set_project_id(project_id)
+      @current_project.set_project_id(project_id)
     end
 
     def translations_format(frmt)
-      Yatapp.api_caller.set_translation_format(frmt)
+      @current_project.set_translation_format(frmt)
     end
 
     def get_translations
-      Yatapp.api_caller.get_translations
+      Yatapp.all_projects.map { |p| p.get_translations }
     end
   end
 end

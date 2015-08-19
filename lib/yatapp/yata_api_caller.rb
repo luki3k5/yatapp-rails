@@ -22,7 +22,7 @@ module Yatapp
     def initialize
       initialize_configuration
       @translation_format = 'json'
-      @connection         = make_connection
+      @connection         = prepare_connection
     end
 
     def set_languages(languages)
@@ -53,6 +53,7 @@ module Yatapp
           puts "INVALID RESPONSE: #{api_response.body}"
           return false
         end
+        return true
       end
 
       def initialize_configuration
@@ -62,13 +63,14 @@ module Yatapp
         end
       end
 
-      def make_connection
+      def prepare_connection
         Faraday.new(url: API_BASE_URL) do |faraday|
           faraday.adapter :typhoeus
         end
       end
 
       def save_translation(lang, response)
+        puts "save_translation #{lang} #{response.inspect}"
         bfp = base_file_path
         File.open("#{bfp}#{lang}.yata.#{translation_format}", 'wb') { |f| f.write(response.body) }
         puts "#{lang}.yata.#{translation_format} saved"
