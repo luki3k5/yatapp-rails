@@ -70,7 +70,6 @@ module Yatapp
       end
 
       def save_translation(lang, response)
-        puts "save_translation #{lang} #{response.inspect}"
         bfp = base_file_path
         File.open("#{bfp}#{lang}.yata.#{translation_format}", 'wb') { |f| f.write(response.body) }
         puts "#{lang}.yata.#{translation_format} saved"
