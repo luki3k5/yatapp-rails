@@ -38,6 +38,18 @@ yata_project do
   format :json                 # format you wish to get files in, available for now are (yaml, js and json)
 end
 
+# another example of the same project, fetching js translation and saving it at custom path
+# (in this case to support rails assets pipe line)
+# please notice that if 'save_to_path' is not specified gem will save translations to the local directory
+# or in case of rails application into 'config/locales' directory
+
+yata_project do
+  project_id 'your-project-id'            # project id you wish to fetch from (you can find it under settings of your organization)
+  languages  ['en', 'de']                 # add any languages you wish by language code
+  format :js                              # format you wish to get files in, available for now are (yaml, js and json)
+  save_to_path "app/assets/javascripts/"
+end
+
 ```
 
 ## Development

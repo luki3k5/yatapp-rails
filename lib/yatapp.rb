@@ -37,6 +37,10 @@ module Yatapp
       @current_project.set_languages(languages)
     end
 
+    def save_to_path(path)
+      @current_project.set_save_to_path(path)
+    end
+
     def project_id(project_id)
       @current_project.set_project_id(project_id)
     end

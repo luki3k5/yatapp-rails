@@ -5,7 +5,6 @@ require 'pry'
 
 module Yatapp
   class YataApiCaller
-    ALLOWED_FORMATS = %w(json yaml)
     API_VERSION           = 'v1'
     API_END_POINT_URL     = "/api/:api_version/project/:project_id/:lang/:format"
     API_BASE_URL          = "http://api.yatapp.net"
@@ -13,6 +12,7 @@ module Yatapp
       :connection,
       :languages,
       :project_id,
+      :save_to_path,
       :translation_format
     ].freeze
 
@@ -31,6 +31,10 @@ module Yatapp
 
     def set_project_id(project_id)
       @project_id = project_id
+    end
+
+    def set_save_to_path(path)
+      @save_to_path = path
     end
 
     def set_translation_format(translation_format)
@@ -70,13 +74,17 @@ module Yatapp
       end
 
       def save_translation(lang, response)
-        bfp = base_file_path
+        bfp = save_file_path
         File.open("#{bfp}#{lang}.yata.#{translation_format}", 'wb') { |f| f.write(response.body) }
         puts "#{lang}.yata.#{translation_format} saved"
       end
 
-      def base_file_path
-        "#{Rails.root}/config/locales/" if defined?(Rails)
+      def save_file_path
+        if defined?(Rails) && @save_path.empty?
+          "#{Rails.root}/config/locales/"
+        elsif !@save_path.empty?
+          @save_path
+        end
       end
 
       def download_url(lang)
