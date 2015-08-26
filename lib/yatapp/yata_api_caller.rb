@@ -22,6 +22,7 @@ module Yatapp
     def initialize
       initialize_configuration
       @translation_format = 'json'
+      @save_to_path       = ""
       @connection         = prepare_connection
     end
 
@@ -80,10 +81,10 @@ module Yatapp
       end
 
       def save_file_path
-        if defined?(Rails) && @save_path.empty?
+        if defined?(Rails) && @save_to_path == ""
           "#{Rails.root}/config/locales/"
-        elsif !@save_path.empty?
-          @save_path
+        elsif @save_to_path != ""
+          @save_to_path
         end
       end
 
