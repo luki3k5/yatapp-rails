@@ -35,7 +35,7 @@ end
 yata_project do
   project_id 'your-project-id' # project id you wish to fetch from (you can find it under settings of your organization)
   languages  ['en', 'de']      # add any languages you wish by language code
-  format :json                 # format you wish to get files in, available for now are (yaml, js and json)
+  translations_format 'json'   # format you wish to get files in, available for now are (yaml, js and json)
 end
 
 # another example of the same project, fetching js translation and saving it at custom path
@@ -46,7 +46,7 @@ end
 yata_project do
   project_id 'your-project-id'            # project id you wish to fetch from (you can find it under settings of your organization)
   languages  ['en', 'de']                 # add any languages you wish by language code
-  format :js                              # format you wish to get files in, available for now are (yaml, js and json)
+  translations_format 'js'                # format you wish to get files in, available for now are (yaml, js and json)
   save_to_path "app/assets/javascripts/"
 end
 
