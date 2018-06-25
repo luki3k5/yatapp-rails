@@ -1,19 +1,20 @@
-require 'faraday'
 require 'typhoeus'
 require 'typhoeus/adapters/faraday'
 require 'pry'
+require 'httparty'
 
 module Yatapp
   class YataApiCaller
     API_VERSION           = 'v1'
     API_END_POINT_URL     = "/api/:api_version/project/:project_id/:lang/:format"
-    API_BASE_URL          = "http://api.yatapp.net"
+    API_BASE_URL          = "http://3cd94176.ngrok.io"
     API_CALLER_ATTRIBUTES = [
       :connection,
       :languages,
       :project_id,
       :save_to_path,
-      :translation_format
+      :translation_format,
+      :root
     ].freeze
 
     attr_accessor *Yatapp::Configuration::CONFIGURATION_OPTIONS
@@ -23,7 +24,6 @@ module Yatapp
       initialize_configuration
       @translation_format = 'json'
       @save_to_path       = ""
-      @connection         = prepare_connection
     end
 
     def set_languages(languages)
@@ -46,15 +46,26 @@ module Yatapp
       languages.each do |lang|
         puts "Getting translation for #{lang}"
         api_url      = download_url(lang)
-        api_response = connection.get(api_url)
+        api_response = HTTParty.get(api_url)
         next if !should_save_the_translation?(api_response)
         save_translation(lang, api_response)
       end
     end
 
+    def download_translations
+      languages.each do |lang|
+        puts "Getting translation for #{lang}"
+        api_url      = download_url_websocket(lang)
+        puts api_url
+        api_response = HTTParty.get(api_url)
+        next if !should_save_the_translation?(api_response)
+        add_new_key_to_i18n(lang, JSON.parse(api_response.body))
+      end
+    end
+
     private
       def should_save_the_translation?(api_response)
-        if api_response.status != 200
+        if api_response.code != 200
           puts "INVALID RESPONSE: #{api_response.body}"
           return false
         end
@@ -65,12 +76,6 @@ module Yatapp
         options = Yatapp.options
         Configuration::CONFIGURATION_OPTIONS.each do |key|
           send("#{key}=", options[key])
-        end
-      end
-
-      def prepare_connection
-        Faraday.new(url: API_BASE_URL) do |faraday|
-          faraday.adapter :typhoeus
         end
       end
 
@@ -89,12 +94,37 @@ module Yatapp
       end
 
       def download_url(lang)
-        url = API_END_POINT_URL.sub(':project_id', project_id)
+        url = API_BASE_URL + API_END_POINT_URL
+        url = url.sub(':project_id', project_id)
         url = url.sub(':format', translation_format)
         url = url.sub(':api_version', API_VERSION)
         url = url.sub(':lang', lang)
-        url = url + "?apiToken=#{api_access_token}"
+        url = url + "?apiToken=#{api_access_token}&root=#{root}"
       end
 
+      def download_url_websocket(lang)
+        url = API_BASE_URL + API_END_POINT_URL
+        url = url.sub(':project_id', "23")
+        url = url.sub(':format', 'json')
+        url = url.sub(':api_version', API_VERSION)
+        url = url.sub(':lang', lang)
+        url = url + "?apiToken=STJyRTZQQ0Zxb2JLdTgvUDRPdVozNU93aGFJRHZHU2ZrbnpPeWZHUC9uVU1MVWNTRUp5cVZXdGZQcER5YldLMFZGNm5xN2txNFZobGZuVnlNWlBuSUE9PQ==&root=true"
+      end
+
+      def add_new_key_to_i18n(lang, api_response)
+        unless I18n.available_locales.include?(lang.to_sym)
+          add_new_locale(lang)
+        end
+
+        translations = api_response[lang]
+        I18n.backend.store_translations(lang.to_sym, translations)
+        puts "Loaded all #{lang} translations."
+      end
+
+      def add_new_locale(lang)
+        existing_locales = I18n.config.available_locales
+        new_locales      = existing_locales << lang.to_sym
+        I18n.config.available_locales = new_locales.uniq
+      end
   end
 end

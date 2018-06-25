@@ -2,6 +2,8 @@ require "yatapp/version"
 require "yatapp/configuration"
 require "yatapp/yata_api_caller"
 require 'yatapp/railtie' if defined?(Rails)
+require "yatapp/inbox.rb"
+require "yatapp/socket.rb"
 
 module Yatapp
   extend Configuration
@@ -51,6 +53,10 @@ module Yatapp
 
     def get_translations
       Yatapp.all_projects.map { |p| p.get_translations }
+    end
+
+    def download_translations
+      Yatapp.all_projects.map { |p| p.download_translations }
     end
   end
 end
