@@ -16,10 +16,12 @@ module Phoenix
     include MonitorMixin
     attr_reader :path, :socket, :inbox, :topic
     attr_accessor :verbose, :join_options_proc, :connect_options_proc
+    attr_accessor *Yatapp::Configuration::CONFIGURATION_OPTIONS
 
-    def initialize()
-      @path = 'ws://3cd94176.ngrok.io/socket/websocket?api_token=STJyRTZQQ0Zxb2JLdTgvUDRPdVozNU93aGFJRHZHU2ZrbnpPeWZHUC9uVU1MVWNTRUp5cVZXdGZQcER5YldLMFZGNm5xN2txNFZobGZuVnlNWlBuSUE9PQ=='
-      @topic = "translations:23"
+    def initialize
+      initialize_configuration
+      @path = "ws://run.yatapp.net/socket/websocket?api_token=#{api_access_token}"
+      @topic = "translations:#{project_id}"
       @join_options = {}
       @connect_options = {}
       @inbox = Phoenix::Inbox.new(ttl: 15)
@@ -73,6 +75,13 @@ module Phoenix
 
     attr_reader :inbox_cond, :thread_ready
 
+    def initialize_configuration
+      options = Yatapp.options
+      Configuration::CONFIGURATION_OPTIONS.each do |key|
+        send("#{key}=", options[key])
+      end
+    end
+
     def log(msg)
       return unless @verbose
       puts "[#{Thread.current[:id]}] #{msg} (#@topic_joined)"
@@ -93,20 +102,31 @@ module Phoenix
       @ws_thread&.alive? && !@dead
     end
 
-    def handle_close(event)
-      synchronize do
-        reset_state_conditions
-        inbox_cond.signal
-        thread_ready.signal
-      end
-    end
-
     def reset_state_conditions
       @dead = true # no EM thread active, or the connection has been closed
       @socket = nil # the Faye::Websocket::Client instance
       @spawned = false # The thread running (or about to run) EventMachine has been launched
       @join_ref = SecureRandom.uuid # unique id that Phoenix uses to identify the socket <-> channel connection
       @topic_joined = false # The initial join request has been acked by the remote server
+    end
+
+    def add_new_key_to_i18n(key, values)
+      values.each do |value|
+        unless I18n.available_locales.include?(value['lang'].to_sym)
+          add_new_locale(value['lang'])
+        end
+
+        key_array = key.split(".")
+        translation_hash = key_array.reverse.inject(value['text']) {|acc, n| {n => acc}}
+        I18n.backend.store_translations(value['lang'].to_sym, translation_hash)
+        puts "new translation added: #{value['lang']} => #{key}: #{value['text']}"
+      end
+    end
+
+    def add_new_locale(lang)
+      existing_locales = I18n.config.available_locales
+      new_locales      = existing_locales << lang.to_sym
+      I18n.config.available_locales = new_locales.uniq
     end
 
     def handle_message(event)
@@ -148,6 +168,14 @@ module Phoenix
         thread_ready.broadcast
       end
       Yatapp.download_translations
+    end
+
+    def handle_close(event)
+      synchronize do
+        reset_state_conditions
+        inbox_cond.signal
+        thread_ready.signal
+      end
     end
 
     def build_path
@@ -197,35 +225,16 @@ module Phoenix
                 spawn_thread
                 sleep(1)
               else
-                EM.next_tick { socket.send({ topic: "translations:23", event: "ping", payload: {}, ref: @join_ref }.to_json) }
+                EM.next_tick { socket.send({ topic: "translations:#{project_id}", event: "ping", payload: {}, ref: @join_ref }.to_json) }
               end
             end
           end
 
           EventMachine.add_periodic_timer(50) do
-            EM.next_tick { socket.send({ topic: "translations:23", event: "ping", payload: {}, ref: @join_ref }.to_json) }
+            EM.next_tick { socket.send({ topic: "translations:#{project_id}", event: "ping", payload: {}, ref: @join_ref }.to_json) }
           end
         end
       end
     end
-  end
-
-  def add_new_key_to_i18n(key, values)
-    values.each do |value|
-      unless I18n.available_locales.include?(value['lang'].to_sym)
-        add_new_locale(value['lang'])
-      end
-
-      key_array = key.split(".")
-      translation_hash = key_array.reverse.inject(value['text']) {|acc, n| {n => acc}}
-      I18n.backend.store_translations(value['lang'].to_sym, translation_hash)
-      puts "new translation added: #{value['lang']} => #{key}: #{value['text']}"
-    end
-  end
-
-  def add_new_locale(lang)
-    existing_locales = I18n.config.available_locales
-    new_locales      = existing_locales << lang.to_sym
-    I18n.config.available_locales = new_locales.uniq
   end
 end

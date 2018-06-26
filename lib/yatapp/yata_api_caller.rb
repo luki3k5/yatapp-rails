@@ -1,45 +1,19 @@
-require 'typhoeus'
-require 'typhoeus/adapters/faraday'
-require 'pry'
 require 'httparty'
 
 module Yatapp
   class YataApiCaller
     API_VERSION           = 'v1'
     API_END_POINT_URL     = "/api/:api_version/project/:project_id/:lang/:format"
-    API_BASE_URL          = "http://3cd94176.ngrok.io"
-    API_CALLER_ATTRIBUTES = [
-      :connection,
-      :languages,
-      :project_id,
-      :save_to_path,
-      :translation_format,
-      :root
-    ].freeze
+    API_BASE_URL          = "http://run.yatapp.net"
 
     attr_accessor *Yatapp::Configuration::CONFIGURATION_OPTIONS
-    attr_reader *API_CALLER_ATTRIBUTES
 
     def initialize
-      initialize_configuration
       @translation_format = 'json'
       @save_to_path       = ""
-    end
-
-    def set_languages(languages)
-      @languages = languages
-    end
-
-    def set_project_id(project_id)
-      @project_id = project_id
-    end
-
-    def set_save_to_path(path)
-      @save_to_path = path
-    end
-
-    def set_translation_format(translation_format)
-      @translation_format = translation_format
+      @root               = false
+      @languages          = ['en']
+      initialize_configuration
     end
 
     def get_translations
@@ -108,7 +82,7 @@ module Yatapp
         url = url.sub(':format', 'json')
         url = url.sub(':api_version', API_VERSION)
         url = url.sub(':lang', lang)
-        url = url + "?apiToken=STJyRTZQQ0Zxb2JLdTgvUDRPdVozNU93aGFJRHZHU2ZrbnpPeWZHUC9uVU1MVWNTRUp5cVZXdGZQcER5YldLMFZGNm5xN2txNFZobGZuVnlNWlBuSUE9PQ==&root=true"
+        url = url + "?apiToken=#{api_access_token}&root=true"
       end
 
       def add_new_key_to_i18n(lang, api_response)
