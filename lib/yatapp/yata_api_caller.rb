@@ -55,8 +55,8 @@ module Yatapp
 
       def save_translation(lang, response)
         bfp = save_file_path
-        File.open("#{bfp}#{lang}.yata.#{translation_format}", 'wb') { |f| f.write(response.body) }
-        puts "#{lang}.yata.#{translation_format} saved"
+        File.open("#{bfp}#{lang}.#{translation_format}", 'wb') { |f| f.write(response.body) }
+        puts "#{lang}.#{translation_format} saved"
       end
 
       def save_file_path
@@ -78,7 +78,7 @@ module Yatapp
 
       def download_url_websocket(lang)
         url = API_BASE_URL + API_END_POINT_URL
-        url = url.sub(':project_id', "23")
+        url = url.sub(':project_id', project_id)
         url = url.sub(':format', 'json')
         url = url.sub(':api_version', API_VERSION)
         url = url.sub(':lang', lang)

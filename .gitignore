@@ -9,3 +9,4 @@
 /tmp/
 *.yata.yaml
 *.yata.yml
+.DS_Store

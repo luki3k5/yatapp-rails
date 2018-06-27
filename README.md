@@ -30,27 +30,32 @@ include Yatapp
 
 Yatapp.configure do |c|
   c.api_access_token = ENV['YATA_API_KEY'] # access key to Yata
+  c.project_id 'your-project-id' # project id you wish to fetch from (you can find it under settings of your organization)
+  c.languages  ['en', 'de']      # add any languages you wish by language code - default ['en']
+  c.translations_format 'json'   # format you wish to get files in, available for now are (yaml, js, json, properties, xml, strings and plist) - default 'json'
+  c.save_to_path "app/assets/javascripts/" # default /config/locales/
+  c.root # add locale root to file with translations - default false
+end
+```
+
+
+Add this line to configuration if you want websocket integration.
+
+``` ruby
+include Yatapp
+
+Yatapp.configure do |c|
+  c.api_access_token = ENV['YATA_API_KEY']
+  ...
 end
 
-yata_project do
-  project_id 'your-project-id' # project id you wish to fetch from (you can find it under settings of your organization)
-  languages  ['en', 'de']      # add any languages you wish by language code
-  translations_format 'json'   # format you wish to get files in, available for now are (yaml, js and json)
-end
-
-# another example of the same project, fetching js translation and saving it at custom path
-# (in this case to support rails assets pipe line)
-# please notice that if 'save_to_path' is not specified gem will save translations to the local directory
-# or in case of rails application into 'config/locales' directory
-
-yata_project do
-  project_id 'your-project-id'            # project id you wish to fetch from (you can find it under settings of your organization)
-  languages  ['en', 'de']                 # add any languages you wish by language code
-  translations_format 'js'                # format you wish to get files in, available for now are (yaml, js and json)
-  save_to_path "app/assets/javascripts/"
-end
+Yatapp.start_websocket
 
 ```
+
+Websocket integration connects to Yata server and stays open. All changes in translations are auto-fetched to the app.
+
+When app connects to the Yata server for the first time it downloads all translation and saves them to the i18n store. Then all actions on translations like create, update and delete are broadcasting information and i18n store is updated.
 
 ## Development
 

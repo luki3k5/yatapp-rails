@@ -33,8 +33,6 @@ module Phoenix
       request_reply(event: "ping", payload: {})
     end
 
-    # Simulate a synchronous call over the websocket
-    # TODO: use a queue/inbox/outbox here instead
     def request_reply(event:, payload: {}, timeout: 5) # timeout in seconds
       ref = SecureRandom.uuid
       synchronize do
@@ -77,7 +75,7 @@ module Phoenix
 
     def initialize_configuration
       options = Yatapp.options
-      Configuration::CONFIGURATION_OPTIONS.each do |key|
+      Yatapp::Configuration::CONFIGURATION_OPTIONS.each do |key|
         send("#{key}=", options[key])
       end
     end
@@ -131,7 +129,6 @@ module Phoenix
 
     def handle_message(event)
       data = JSON.parse(event.data)
-      puts "data event: #{data['event']}"
       log event.data
       synchronize do
         if data['event'] == 'phx_close'
@@ -160,7 +157,6 @@ module Phoenix
     end
 
     def handle_open(event)
-      puts 'open'
       log 'open'
       socket.send({ topic: topic, event: "phx_join", payload: join_options, ref: @join_ref, join_ref: @join_ref }.to_json)
       synchronize do
@@ -187,7 +183,6 @@ module Phoenix
 
     def spawn_thread
       return if @spawned || connection_alive?
-      puts 'spawning...'
       log 'spawning...'
       @spawned = true
       @ws_thread = Thread.new do

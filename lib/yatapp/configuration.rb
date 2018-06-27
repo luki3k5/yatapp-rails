@@ -6,7 +6,8 @@ module Yatapp
       :project_id,
       :languages,
       :translation_format,
-      :root
+      :root,
+      :save_to_path
     ].freeze
 
     attr_accessor *CONFIGURATION_OPTIONS
