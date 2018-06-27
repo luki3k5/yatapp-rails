@@ -18,44 +18,108 @@ Or install it yourself as:
 
     $ gem install yatapp
 
-## Usage in Rails
-Before using Yata integration gem you need to configure it.
-We recommend adding the following lines to freshly created initialiser
-in your rails project:
+## Configuration
 
+Gem can be used in two ways:
+* integration through API
+* websocket integration
 
-```ruby
+### Configuration Parameters
 
-include Yatapp
+* `api_access_token` - access key to Yata (Organizations Settings > Security > API token)
+* `project_id` - project id you wish to fetch from (Organizations Settings > Security> Projects > Id)
+* `languages` - supported locales, add any locale you wish. Default: `[:en]`
+* `translation_format` - format you wish to get files in, available for now are (yaml, js, json, properties, xml, strings and plist). Default: `json`
+* `save_to_path` - you can define where files should be saved. Default: `/config/locales/`
+* `root` - add locale as root to file with translations. Default: `false`
 
-Yatapp.configure do |c|
-  c.api_access_token = ENV['YATA_API_KEY'] # access key to Yata
-  c.project_id 'your-project-id' # project id you wish to fetch from (you can find it under settings of your organization)
-  c.languages  ['en', 'de']      # add any languages you wish by language code - default ['en']
-  c.translations_format 'json'   # format you wish to get files in, available for now are (yaml, js, json, properties, xml, strings and plist) - default 'json'
-  c.save_to_path "app/assets/javascripts/" # default /config/locales/
-  c.root # add locale root to file with translations - default false
-end
+First two parameters are required and the rest is optional.
+
+Translations with root set to `false`:
+
+```yaml
+  # en.yml
+
+  hello: Hello
+  hello_name: Hello %{name}
 ```
 
+Translations with root set to `true`:
+```yaml
+  # en.yml
 
-Add this line to configuration if you want websocket integration.
+  en:
+    hello: Hello
+    hello_name: Hello %{name}
+```
 
-``` ruby
+### API Integration
+
+Recommended configuration:
+
+```ruby
+# config/initializers/yatapp.rb
+
 include Yatapp
 
 Yatapp.configure do |c|
   c.api_access_token = ENV['YATA_API_KEY']
-  ...
+  c.project_id = ENV['YATA_PROJECT_ID']
+  c.languages  = ['en', 'de', 'en_US']
+  c.translations_format = 'json'
+end
+```
+
+To save file in a different location from default or add a locale as a root, add to configuration two lines as in example below:
+
+```ruby
+  # config/initializers/yatapp.rb
+
+  include Yatapp
+
+  Yatapp.configure do |c|
+    c.api_access_token = ENV['YATA_API_KEY']
+    c.project_id = ENV['YATA_PROJECT_ID']
+    c.languages  = ['en', 'de', 'en_US']
+    c.translations_format = 'json'
+    c.save_to_path = '/public/locales/'
+    c.root = true
+  end
+```
+
+From now on your translations will be saved in `/public/locales/` directory and translations will have locale as a root.
+
+
+API integration allows you to download all translations using rake task:
+
+```bash
+$ rake yata:fetch_translations
+```
+
+### Websocket Integration
+
+Websocket integration connects to Yata server and stays open. All changes in translations are auto-fetched to the app.
+
+When app connects to the Yata server for the first time it downloads all translation and saves them to the i18n store. Then all actions on translations like create, update and delete are broadcasting information and i18n store is updated.
+
+Add this line to configuration if you want to enable websocket integration.
+
+``` ruby
+# config/initializers/yatapp.rb
+
+include Yatapp
+
+Yatapp.configure do |c|
+  c.api_access_token = ENV['YATA_API_KEY']
+  c.project_id = ENV['YATA_PROJECT_ID']
+  c.languages  = ['en', 'de', 'en_US']
 end
 
 Yatapp.start_websocket
 
 ```
 
-Websocket integration connects to Yata server and stays open. All changes in translations are auto-fetched to the app.
 
-When app connects to the Yata server for the first time it downloads all translation and saves them to the i18n store. Then all actions on translations like create, update and delete are broadcasting information and i18n store is updated.
 
 ## Development
 
