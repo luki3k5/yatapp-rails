@@ -3,7 +3,11 @@ module Yatapp
     CONFIGURATION_OPTIONS = [
       :languages,
       :api_access_token,
-      :project
+      :project_id,
+      :languages,
+      :translation_format,
+      :root,
+      :save_to_path
     ].freeze
 
     attr_accessor *CONFIGURATION_OPTIONS

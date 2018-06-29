@@ -1,0 +1,16 @@
+{ "en": {
+    "number": 1,
+    "empty": "empty",
+    "hello": "Hello world",
+    "hello_2": {
+      "world": "test"
+    },
+    "hello_name": "Hello %{name}",
+    "hello_many": "- John\n- Mike\n- Paul",
+    "incomplete": {
+      "path": {
+        "text": "test"
+      }
+    }
+  }
+}
