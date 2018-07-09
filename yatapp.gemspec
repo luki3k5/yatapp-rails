@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{This gem allows for easy integration with Yata to fetch translation files from the service}
   spec.description   = %q{This gem allows for easy integration with Yata to fetch translation files from the service}
-  spec.homepage      = "http://github.com/luki3k5/yatapp"
+  spec.homepage      = "http://github.com/luki3k5/yatapp-rails"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
