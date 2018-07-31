@@ -4,7 +4,6 @@ require 'yatapp/inbox'
 require 'json'
 require 'cgi'
 require 'uri'
-require 'pry'
 begin
   require 'rails-i18n'
 rescue
