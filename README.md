@@ -55,7 +55,9 @@ Translations with root set to `true`:
 
 ### API Integration
 
-Recommended configuration:
+#### Rails
+
+Recommended configuration for Rails applications:
 
 ```ruby
 # config/initializers/yatapp.rb
@@ -66,25 +68,25 @@ Yatapp.configure do |c|
   c.api_access_token = ENV['YATA_API_KEY']
   c.project_id = ENV['YATA_PROJECT_ID']
   c.languages  = ['en', 'de', 'en_US']
-  c.translations_format = 'json'
+  c.translation_format = 'json'
 end
 ```
 
 To save file in a different location from default or add a locale as a root, add to configuration two lines as in example below:
 
 ```ruby
-  # config/initializers/yatapp.rb
+# config/initializers/yatapp.rb
 
-  include Yatapp
+include Yatapp
 
-  Yatapp.configure do |c|
-    c.api_access_token = ENV['YATA_API_KEY']
-    c.project_id = ENV['YATA_PROJECT_ID']
-    c.languages  = ['en', 'de', 'en_US']
-    c.translations_format = 'json'
-    c.save_to_path = '/public/locales/'
-    c.root = true
-  end
+Yatapp.configure do |c|
+  c.api_access_token = ENV['YATA_API_KEY']
+  c.project_id = ENV['YATA_PROJECT_ID']
+  c.languages  = ['en', 'de', 'en_US']
+  c.translation_format = 'json'
+  c.save_to_path = '/public/locales/'
+  c.root = true
+end
 ```
 
 From now on your translations will be saved in `/public/locales/` directory and translations will have locale as a root.
@@ -95,6 +97,41 @@ API integration allows you to download all translations using rake task:
 ```bash
 $ rake yata:fetch_translations
 ```
+
+#### Sinatra
+
+Add to your Gemfile `rake` gem:
+
+```ruby
+# Gemfile
+
+gem 'rake'
+```
+
+Install with `bundle install`.
+
+Add Rakefile with custom task:
+
+```ruby
+# Rakefile
+
+require 'yatapp'
+require 'sinatra'
+
+Yatapp.configure do |c|
+  c.api_access_token = ENV['YATA_API_KEY']
+  c.project_id = ENV['YATA_PROJECT_ID']
+  c.languages  = ['en', 'de', 'en_US']
+  c.translation_format = 'json'
+  c.save_to_path = Sinatra::Application.settings.root + '/config/locales/'
+end
+
+task :fetch_translations do
+  Yatapp.get_translations
+end
+```
+
+From now on your translations can be fetched with command: `rake fetch_translations`
 
 ### Websocket Integration
 
