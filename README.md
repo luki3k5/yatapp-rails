@@ -66,7 +66,7 @@ Yatapp.configure do |c|
   c.api_access_token = ENV['YATA_API_KEY']
   c.project_id = ENV['YATA_PROJECT_ID']
   c.languages  = ['en', 'de', 'en_US']
-  c.translations_format = 'json'
+  c.translation_format = 'json'
 end
 ```
 
@@ -81,7 +81,7 @@ To save file in a different location from default or add a locale as a root, add
     c.api_access_token = ENV['YATA_API_KEY']
     c.project_id = ENV['YATA_PROJECT_ID']
     c.languages  = ['en', 'de', 'en_US']
-    c.translations_format = 'json'
+    c.translation_format = 'json'
     c.save_to_path = '/public/locales/'
     c.root = true
   end
