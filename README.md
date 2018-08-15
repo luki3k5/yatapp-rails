@@ -100,17 +100,17 @@ $ rake yata:fetch_translations
 
 #### Sinatra
 
-Add to your Gemfile `rake` gem:
+Add to your Gemfile `yatapp` gem:
 
 ```ruby
 # Gemfile
 
-gem 'rake'
+gem 'yatapp'
 ```
 
 Install with `bundle install`.
 
-Add Rakefile with custom task:
+Add Rakefile file in root of your project with custom task:
 
 ```ruby
 # Rakefile
