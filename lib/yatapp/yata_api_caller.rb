@@ -9,11 +9,12 @@ module Yatapp
     attr_accessor *Yatapp::Configuration::CONFIGURATION_OPTIONS
 
     def initialize
-      @translation_format = 'json'
-      @save_to_path       = ""
-      @root               = false
-      @languages          = ['en']
       initialize_configuration
+      @translation_format ||= 'json'
+      @save_to_path       ||= ""
+      @root               ||= false
+      @languages          ||= ['en']
+      @strip_empty        ||= false
     end
 
     def get_translations
@@ -73,7 +74,7 @@ module Yatapp
         url = url.sub(':format', translation_format)
         url = url.sub(':api_version', API_VERSION)
         url = url.sub(':lang', lang)
-        url = url + "?apiToken=#{api_access_token}&root=#{root}"
+        url = url + "?apiToken=#{api_access_token}&root=#{root}&strip_empty=#{strip_empty}"
       end
 
       def download_url_websocket(lang)
