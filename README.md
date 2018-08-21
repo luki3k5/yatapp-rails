@@ -32,6 +32,7 @@ Gem can be used in two ways:
 * `translation_format` - format you wish to get files in, available for now are (yaml, js, json, properties, xml, strings and plist). Default: `json`
 * `save_to_path` - you can define where files should be saved. Default: `/config/locales/`
 * `root` - add locale as root to file with translations. Default: `false`
+* `strip_empty` - generates only keys that have text and skip empty ones. Default `false`
 
 First two parameters are required and the rest is optional.
 
@@ -86,10 +87,11 @@ Yatapp.configure do |c|
   c.translation_format = 'json'
   c.save_to_path = '/public/locales/'
   c.root = true
+  c.strip_empty = true
 end
 ```
 
-From now on your translations will be saved in `/public/locales/` directory and translations will have locale as a root.
+From now on your translations will be saved in `/public/locales/` directory, translations will have locale as a root and all keys without text will be skipped.
 
 
 API integration allows you to download all translations using rake task:
