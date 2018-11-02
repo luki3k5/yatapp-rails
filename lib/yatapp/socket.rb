@@ -19,7 +19,7 @@ module Phoenix
 
     def initialize
       initialize_configuration
-      @path = "ws://run.yatapp.net/socket/websocket?api_token=#{api_access_token}"
+      @path = "wss://run.yatapp.net/socket/websocket?api_token=#{api_access_token}"
       @topic = "translations:#{project_id}"
       @join_options = {}
       @connect_options = {}
