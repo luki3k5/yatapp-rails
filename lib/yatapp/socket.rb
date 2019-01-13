@@ -96,7 +96,7 @@ module Phoenix
     end
 
     def connection_alive?
-      @ws_thread&.alive? && !@dead
+      @ws_thread && @ws_thread.alive? && !@dead
     end
 
     def reset_state_conditions
