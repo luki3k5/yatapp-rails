@@ -8,7 +8,8 @@ module Yatapp
       :translation_format,
       :root,
       :save_to_path,
-      :strip_empty
+      :strip_empty,
+      :download_on_start
     ].freeze
 
     attr_accessor *CONFIGURATION_OPTIONS

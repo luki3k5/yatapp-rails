@@ -27,14 +27,14 @@ module Yatapp
       end
     end
 
-    def download_translations
+    def download_translations_and_store
       languages.each do |lang|
         puts "Getting translation for #{lang}"
         api_url      = download_url_websocket(lang)
         puts api_url
         api_response = HTTParty.get(api_url)
         next if !should_save_the_translation?(api_response)
-        add_new_key_to_i18n(lang, JSON.parse(api_response.body))
+        Store.store_translations(lang, JSON.parse(api_response.body))
       end
     end
 
@@ -84,22 +84,6 @@ module Yatapp
         url = url.sub(':api_version', API_VERSION)
         url = url.sub(':lang', lang)
         url = url + "?apiToken=#{api_access_token}&root=true"
-      end
-
-      def add_new_key_to_i18n(lang, api_response)
-        unless I18n.available_locales.include?(lang.to_sym)
-          add_new_locale(lang)
-        end
-
-        translations = api_response[lang]
-        I18n.backend.store_translations(lang.to_sym, translations)
-        puts "Loaded all #{lang} translations."
-      end
-
-      def add_new_locale(lang)
-        existing_locales = I18n.config.available_locales
-        new_locales      = existing_locales << lang.to_sym
-        I18n.config.available_locales = new_locales.uniq
       end
   end
 end

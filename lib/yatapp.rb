@@ -14,7 +14,9 @@ module Yatapp
     end
 
     def download_translations
-      api_caller.download_translations
+      if download_on_start
+        api_caller.download_translations_and_store
+      end
     end
 
     def start_websocket

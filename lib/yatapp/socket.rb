@@ -1,14 +1,10 @@
 require 'faye/websocket'
 require 'eventmachine'
 require 'yatapp/inbox'
+require 'yatapp/store'
 require 'json'
 require 'cgi'
 require 'uri'
-begin
-  require 'rails-i18n'
-rescue
-  puts "WARNING: Failed to require rails-i18n gem, websocket integration may fail."
-end
 
 module Phoenix
   class Socket
@@ -107,25 +103,6 @@ module Phoenix
       @topic_joined = false # The initial join request has been acked by the remote server
     end
 
-    def add_new_key_to_i18n(key, values)
-      values.each do |value|
-        unless I18n.available_locales.include?(value['lang'].to_sym)
-          add_new_locale(value['lang'])
-        end
-
-        key_array = key.split(".")
-        translation_hash = key_array.reverse.inject(value['text']) {|acc, n| {n => acc}}
-        I18n.backend.store_translations(value['lang'].to_sym, translation_hash)
-        puts "new translation added: #{value['lang']} => #{key}: #{value['text']}"
-      end
-    end
-
-    def add_new_locale(lang)
-      existing_locales = I18n.config.available_locales
-      new_locales      = existing_locales << lang.to_sym
-      I18n.config.available_locales = new_locales.uniq
-    end
-
     def handle_message(event)
       data = JSON.parse(event.data)
       log event.data
@@ -135,12 +112,12 @@ module Phoenix
           handle_close(event)
         elsif data['event'] == 'new_translation'
           payload = data['payload']
-          add_new_key_to_i18n(payload['key'], payload['values'])
+          Store.add_new_key(payload['key'], payload['values'])
         elsif data['event'] == 'updated_translation'
           payload = data['payload']
-          add_new_key_to_i18n(payload['new_key'], payload['values'])
-        elsif data['event'] == 'deleted translation'
-          puts 'deleted translation'
+          Store.add_new_key(payload['new_key'], payload['values'])
+        elsif data['event'] == 'deleted_translation'
+          puts "deleted translation: #{data['payload']['key']}"
         elsif data['ref'] == @join_ref && data['event'] == 'phx_error'
           # NOTE: For some reason, on errors phx will send the join ref instead of the message ref
           inbox_cond.broadcast
@@ -162,6 +139,7 @@ module Phoenix
         @dead     = false
         thread_ready.broadcast
       end
+
       Yatapp.download_translations
     end
 

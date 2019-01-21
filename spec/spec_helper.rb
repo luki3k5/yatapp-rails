@@ -9,4 +9,5 @@ Yatapp.configure do |c|
   c.translation_format = 'yml'
   c.root = true
   c.save_to_path = "spec/fixtures/"
+  c.download_on_start = true
 end
