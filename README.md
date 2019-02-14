@@ -33,6 +33,7 @@ Gem can be used in two ways:
 * `save_to_path` - you can define where files should be saved. Default: `/config/locales/`
 * `root` - add locale as root to file with translations. Default: `false`
 * `strip_empty` - generates only keys that have text and skip empty ones. Default `false`
+* `download_on_start` - download all translations on start to i18n from Yata when Websocket is enabled. Default: `false`
 
 First two parameters are required and the rest is optional.
 
@@ -158,7 +159,13 @@ Yatapp.start_websocket
 
 ```
 
+### Download translations at the start of the application
 
+If you want to download translations at the start of the application add to `Procfile` line:
+```bash
+task: rake yata:fetch_translations
+```
+It will download all translations to files.
 
 ## Development
 
