@@ -52,6 +52,9 @@ module Yatapp
         Configuration::CONFIGURATION_OPTIONS.each do |key|
           send("#{key}=", options[key])
         end
+
+        raise ArgumentError.new("Missing API_ACCESS_TOKEN") unless api_access_token
+        raise ArgumentError.new("Missing PROJECT_ID") unless project_id
       end
 
       def save_translation(lang, response)
