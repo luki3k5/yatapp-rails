@@ -29,7 +29,7 @@ Gem can be used in two ways:
 * `api_access_token` - access key to Yata (Organizations Settings > Security > API token)
 * `project_id` - project id you wish to fetch from (Organizations Settings > Security> Projects > Id)
 * `languages` - supported locales, add any locale you wish. Default: `[:en]`
-* `translation_format` - format you wish to get files in, available for now are (yaml, js, json, properties, xml, strings and plist). Default: `json`
+* `translation_format` - format you wish to get files in, available for now are (yaml, js, json, properties, xml, xml_escaped, xml_android_resource, strings and plist). Default: `json`
 * `save_to_path` - you can define where files should be saved. Default: `/config/locales/`
 * `root` - add locale as root to file with translations. Default: `false`
 * `strip_empty` - generates only keys that have text and skip empty ones. Default `false`
