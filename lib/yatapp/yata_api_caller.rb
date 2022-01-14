@@ -5,6 +5,17 @@ module Yatapp
     API_VERSION           = 'v1'
     API_END_POINT_URL     = "/api/:api_version/project/:project_id/:lang/:format"
     API_BASE_URL          = "https://run.yatapp.net"
+    TRANSLATION_FORMATS = { 
+      "yaml" => "yaml", 
+      "js" => "js", 
+      "json" => "json", 
+      "properties" => "properties", 
+      "xml" => "xml",
+      "xml_escaped" => "xml", 
+      "xml_android_resource" => "xml", 
+      "strings" => "strings",
+      "plist" => "plist"
+    }
 
     attr_accessor *Yatapp::Configuration::CONFIGURATION_OPTIONS
 
@@ -59,8 +70,9 @@ module Yatapp
 
       def save_translation(lang, response)
         bfp = save_file_path
-        File.open("#{bfp}#{lang}.#{translation_format}", 'wb') { |f| f.write(response.body) }
-        puts "#{lang}.#{translation_format} saved"
+        file_extension = TRANSLATION_FORMATS.key?(translation_format) ? TRANSLATION_FORMATS[translation_format] : translation_format
+        File.open("#{bfp}#{lang}.#{file_extension}", 'wb') { |f| f.write(response.body) }
+        puts "#{lang}.#{file_extension} saved"
       end
 
       def save_file_path
