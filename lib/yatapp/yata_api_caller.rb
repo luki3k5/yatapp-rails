@@ -4,7 +4,7 @@ module Yatapp
   class YataApiCaller
     API_VERSION           = 'v1'
     API_END_POINT_URL     = "/api/:api_version/project/:project_id/:lang/:format"
-    API_BASE_URL          = "https://run.yatapp.net"
+    API_BASE_URL          = "https://api.yatapp.net"
 
     attr_accessor *Yatapp::Configuration::CONFIGURATION_OPTIONS
 
